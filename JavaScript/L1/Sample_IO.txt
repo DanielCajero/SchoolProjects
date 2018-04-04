@@ -1,0 +1,50 @@
+/* INSTRUCTIONS
+Create your own HTML file and link the JS file.
+Using the prompt() method do the following
+1. Ask for the user's first name
+2. Ask for the user's last name
+3. Print out the user's full name in a sentence
+*/
+--------------------------------------
+/* This is the javascript file, name it app.js */
+/* app.js */
+
+var firstName = prompt('What is your first name?'),
+    lastName = prompt('What is your last name?');
+
+var  fullName = firstName + " " +  lastName;
+
+//output.innerHTML = 'Your full name is ' + fullName;
+
+var line = document.getElementById(output);
+
+line.innerHTML = 'Your full name is ' + fullName;
+
+console.log('Your full name is ' + fullName);
+
+---------------------------------------
+
+/* This is the html file that will include the JS file */
+/* index.html */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <h1>JavaScript Prompt Exercise</h1>
+    <p id="output">
+        
+    </p>
+    <script src="app.js"></script>
+</body>
+</html>
+
+-------------------------------------
+//Try it yourself
+/*
+4. Ask for the user's age
+
+5. Print out the user's age number of days
+*/
