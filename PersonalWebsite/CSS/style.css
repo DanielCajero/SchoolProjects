@@ -1,0 +1,99 @@
+/* Fonts from Google Fonts - more at https://fonts.google.com */
+@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:600|Open+Sans');
+
+body {
+  background-color: rgb(218,218,227);
+  font-family: 'Open Sans', sans-serif;
+}
+
+.parallaxIndex {
+   height: 1000px;
+   background-image: url("../Home/fish2.png");
+
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.parallaxBlog {
+    height:700px;
+    background-image: url("../Blogs/blogsbanner.png");
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.bannertext{
+  background-color: rgba(102,102,102, 0.50);
+  color: white;
+  margin: 0 auto;
+  position: relative;
+  top: 240px;
+  border-style: solid;
+  border-width: 3px;
+
+  padding: 40px 0 30px 0;
+}
+
+.post{
+  width: 267px;
+  height: 256px;
+  position: relative;
+  cursor: pointer;
+}
+.post:hover .post-s{
+  width: inherit;
+}
+.post img {
+  display: block;
+  width: auto;
+  height: auto;
+}
+.post-s{
+  width: 0px;
+  height: inherit;
+  background: white;
+  position: absolute;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  transition: 0.7s ease;
+}
+.post-s h2{
+  color: black;
+  font-size:20px;
+  font-weight: bold;
+  border: 6px solid white;
+  padding: 10px 30px;
+}
+
+footer a {
+  color: darkgray;
+  text-decoration: none;
+}
+
+a {
+  color: rgb(87,182,88);
+}
+
+h1 {
+  color: rgb(212,137,137);
+}
+
+h2 {
+  color: rgb(137,137,212);
+}
+
+h3 {
+  color: rgb(175,137,212);
+}
+
+pre {
+    font-family: 'IBM Plex Mono', monospace;
+    background-color: rgb(102,102,102);
+    color: rgb(0,205,0);
+}

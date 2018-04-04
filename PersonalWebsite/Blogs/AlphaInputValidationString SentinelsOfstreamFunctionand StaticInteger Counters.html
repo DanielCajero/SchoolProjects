@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<!---AlphaInputandotherstuff---->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="../CSS/bootstrap.min.css">
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="shortcut icon" href="../favicon.ico" />
+    <title>Blog Post One</title>
+  </head>
+  <body>
+    <nav class="navbar bg-dark navbar-dark navbar-expand-sm fixed-top">
+      <div class="container">
+        <img class="navbar-brand" src="../Home/LLP.png" alt="icon" style="width:42px;"/>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="navbar-nav mr-auto">
+            <a class="nav-item nav-link" href="../index.html">Home</a>
+            <a class="nav-item nav-link active" href="../Blogs/blogs.html">Blogs</a>
+          </div>
+          <div class="navbar-nav ml-auto ">
+            <a class="nav-item nav-link" href="../Home/contact.html">Contact & Resume</a>
+            <span class="navbar-text d-none d-lg-inline-block">The Linux Learning Programmer</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <header>
+        <h1 class="text-md-center text-sm-left"></br></br>Alpha Input Validation, String Sentinels, Ofstream Function and Static Integer Counters</h1>
+      </header>
+      <div class="lead pt-5 pb-5">This week I was tasked with a program that should be written mostly in functions and had some requirements. I was a pain in the ass. Mostly because every question I looked on <a href="http://www.cplusplus.com/">www.cplusplus.com</a> gave me a 404 page not found! The every other forum was not helpful for a beginner like me. But through persistence and lots of reading, I figured it out.
+      </div>
+      <div id="theMain">
+      <h2>The Main</h2>
+        <p>The main was pretty straight forward. In my eyes, there is only three high functions that have smaller functions in them.</p>
+          <pre>
+
+          int main()
+          {
+              string name;
+
+              validateUserName(name);
+              createFile(name);
+              readDataFromFile(name);
+
+              return 0;
+
+          }
+        </pre>
+        <p>The program is still very procedural. The program only needs that one string variable to start. All other variables will be declared in their own functions.</p>
+      </div>
+      <div id="stringValidation">
+        <h2>String Validation</h2>
+        <p>The program had several requirements. The first was that it could only take an alphabetic input, a name. The input must be verified.</p>
+          <pre>
+
+          void validateUserName(string &strName)
+          {
+              int strLength;
+              int index = 0;
+
+              //user prompt
+              cout << "Enter a name and press enter.\n";
+              getline(cin, strName);
+              strLength = strName.length();
+              while(index < strLength || strLength == 0)
+              {
+                  if(!isalpha(strName[index]))
+                  {
+                      cout << "This is not a valid name. Try again.\n";
+                      getline(cin, strName);
+                      strLength = strName.length();
+                      index = 0;
+                  }
+                  else
+                  {
+                      index++;
+                  }
+              }
+          }
+      </pre>
+      <p>The function is similar to the integer validation of my previous <a href="http://www.thelinuxlearningprogrammer.com/2017/07/i-was-task-to-create-program-that-has.html" target="_blank">post</a>. It uses a string. For every part of the string, it checks that it is alpha. If the input is valid then the program moves on. If it does not, the program prompts the user again. Once it is done it goes back to the main function.</p>
+      </div>
+      <div id="creatingAFile">
+        <h2>Creating A File</h2>
+        <h3>Naming A File By A String Variable</h3>
+        <p>The second requirement is to create and name a file by the string that was verified.</p>
+        <pre>
+
+        void createFile(string &strName)
+        {
+            strName = strName + ".txt";
+
+            ofstream outputFile;
+            outputFile.open(strName.c_str());
+
+            writeDataToFile(outputFile);
+
+            outputFile.close();
+        }
+        </pre>
+        <p>The file name needed to have a ".txt" extension. I add one by simply add the two strings together.&nbsp; The naming the file was tricky. My assumption was that put a string variable would work but it didn't.&nbsp; You have to add .c_str() in order for it to work. It returns the contents of a string variable in string form or c string form to be more accurate.&nbsp; Then I had to go send the ofstream to another function, writeDataToFile(). After that functions over, the program closes the output file.</p>
+        <h3>Writing To A File Using A Function</h3>
+        <p>I thought about how the functions interact. Their hierarchy.&nbsp; Writing to a file must be a sub-function of opening / creating and closing a file. It is one thing to create and write to file in the same function but it is another to separate the two. After I figure that out, I had to add a sentinel.</p>
+        <pre>
+
+        void writeDataToFile(ofstream& file)
+        {
+            string whateverString;
+            string tempString;
+            string SENTINEL = "-1";
+
+            do
+            {
+                //user prompt
+                cout << "Type whatever you want. Exit with typing -1. \n";
+                getline(cin,tempString);
+                    if(tempString == SENTINEL)
+                        break;
+                whateverString = tempString;
+                file << whateverString << "\n";
+            } while (tempString != SENTINEL);
+        }
+        </pre>
+        <p>One very important lesson, when passing a ofstream into a function pass it as a reference and like this&nbsp; "writeFunction(ofstream&amp; file)" and not like this "(writeFunction(ofstream &amp;file)". The latter will not work. It also does not make sense. It is easy to see why many of use would think that for the first time all reference parameters have the "&amp;variable" but ofstream is not a variable. After passing it, the function declares three strings. The first string is used to write to the file. The seconds is a temporary string and the last is the sentinel. The function goes into a do loop because the loop must execute at least once. The if statement is there because the user might enter "-1" on their first go. The if statement breaks and nothing is written. As no long as tempString does not equal "-1", the do while loop executes and whatever was in the tempString is written.</p>
+      </div>
+      <div class="" id="readingFromAFile">
+        <h2>Reading from a file in a function</h2>
+        <h3>Reading The String Data</h3>
+        <p>The last function is top level function is called, readDataFromFile(). The name variable gets pushed through and opens the file. The program must read the lines of the file and then seen those line to other function.</p>
+        <pre>
+
+        void readDataFromFile(string fileName)
+        {
+            string readString;
+
+            ifstream inputFile;
+
+            //holds static int counter values
+            int evenSum;
+            int oddSum;
+
+            inputFile.open(fileName.c_str());
+            while(inputFile >> readString)
+            {
+                //calls check digit type functions
+                checkEvenDigit(readString , evenSum);
+                checkOddDigit(readString , oddSum);
+            }
+
+            //calls display functions
+            displayResults(evenSum, oddSum);
+            inputFile.close();
+        }
+        </pre>
+        <p>The while loop reads each string and put them into the check Even /Odd Digit functions. It will continue until there is nothing to read. The functions receive a string and int. The last function receives the altered or unaltered int values to display the results.</p>
+        <h3>Check For Even And Odd Integers</h3>
+        <p>The program must check each string for even or odd integers. The function also has to keep track of the number of even or odd integers.</p>
+        <pre>
+
+        void checkEvenDigit(string checkString , int &sum)
+        {
+            char currentChar;
+
+            int currentNumber;
+            int strLength;
+
+            static int evenCounter;
+
+            strLength = checkString.length();
+
+            for (int index = 0; index < strLength; index++)
+            {
+                currentChar = checkString[index];
+
+                if (isdigit(currentChar))
+                {
+                    currentNumber = currentChar - '0';
+                    if (currentNumber % 2 == 0)
+                    {
+                        evenCounter++;
+                    }
+                }
+            }
+
+            sum = evenCounter;
+        }
+
+        void checkOddDigit(string checkString, int &sum)
+        {
+            char currentChar;
+
+            int currentNumber;
+            static int oddCounter;
+            int strLength;;
+
+            strLength = checkString.length();
+
+            for (int index = 0; index < strLength; index++)
+            {
+                currentChar = checkString[index];
+
+                if (isdigit(currentChar))
+                {
+                    currentNumber = currentChar - '0';
+                    if (!(currentNumber % 2 == 0))
+                    {
+                        oddCounter++;
+                    }
+                }
+            }
+
+            sum = oddCounter;
+        }
+        </pre>
+        <p>The way to check the digits is using isdigit() you check each character of the string. Once a digit is found, the program finds the int equivalent. The int equivalent is then checked if it is even or odd depending on the function. If it is even or odd a static counter increases. The static counter to adds its self every time the function is called. In order to get the counter value, I need a value outside of the variable that can be changed, int even/oddSum. The "sum" the reference variable will equal to the counter's total. Even/oddSum will have the same value after the while loop has ended.</p>
+        <h3>Display The Results</h3>
+        <p>The last function before return all the way to the main() is displayResults(). This one was straightforward.</p>
+        <pre>
+
+        void displayResults(int evenCounter, int oddCounter)
+        {
+            if (oddCounter > 0)
+            {
+                cout << "\nThere are " << oddCounter << " odd integers.\n";
+            }
+            else
+            {
+                cout << "\nThere are no odd integers.\n";
+            }
+
+            if (evenCounter > 0)
+            {
+                cout << "\nThere are " << evenCounter << " even integers.\n";
+            }
+            else
+            {
+             cout << "\nThere are no even integers.\n";
+            }
+
+            cout << "Good-Bye\n";
+        }
+        </pre>
+        <p>The function has two parameters which have gone through the check functions. The functions check if sum/counters are greater zero. If they are greater than zero then the result is displayed. If it is not then they will display that they are not even or odd integers. It will display goodbye and wait for you to press enter.</p>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
